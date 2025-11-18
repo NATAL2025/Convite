@@ -103,7 +103,7 @@ h2, h3, p { text-align: center; margin: 10px 0; }
     cursor: pointer;
 }
 
-input[type="text"], input[type="email"], input[type="number"], select {
+input[type="text"], input[type="number"], select {
     width: 100%;
     padding: 10px 12px;
     margin-bottom: 15px;
@@ -174,19 +174,7 @@ button.formButton:hover {
     </div>
 
     <div id="formInscricao" class="conteudoBox hidden">
-        <h3>Efetuar Inscrição</h3>
-
-        <label>Equipa</label>
-        <select id="coordenacao">
-            <option value="">Seleciona o teu Projeto</option>
-            <option value="FID BPO">FID BPO</option>
-            <option value="Contact Center - Worten">Contact Center - Worten</option>
-            <option value="Contact Center - Fidelidade">Contact Center - Fidelidade</option>
-            <option value="Equipa de Recursos Humanos">Equipa de Recursos Humanos</option>
-        </select>
-
-        <label>Nome completo</label>
-        <input type="text" id="nome">
+        <h3>Vou ao Lanche</h3>
 
         <label>NIF</label>
         <input type="text" id="nif">
@@ -196,10 +184,7 @@ button.formButton:hover {
     </div>
 
     <div id="formNegar" class="conteudoBox hidden">
-        <h3>Recusar Convite</h3>
-
-        <label>Nome Completo</label>
-        <input type="text" id="nomeNegar">
+        <h3>Não vou ao Lanche</h3>
 
         <label>NIF</label>
         <input type="text" id="nifNegar">
@@ -268,20 +253,19 @@ function gerarCodigoNumerico() {
 }
 
 async function gerarInscricao() {
-    const nome = document.getElementById("nome").value.trim();
     const nif = document.getElementById("nif").value.trim();
-    const coord = document.getElementById("coordenacao").value;
-
-    if (!nome || !nif || !coord) { mostrarAlerta("Preencha todos os campos."); return; }
+    if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
     if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
 
-    const site = getSiteDoNif(nif);
-    if (!site) { mostrarAlerta("NIF não existe na lista de associados."); return; }
-
+    const site = getSiteDoNif(nif) || "Não atribuído";
     const codigo = gerarCodigoNumerico();
     const status = "Inscrito";
 
-    const mensagem = `Inscrição realizada com sucesso!\nNome: ${nome}\nCoordenação: ${coord}\nNIF: ${nif}\nSite: ${site}\nCódigo: ${codigo}`;
+    // Campos nome e coordenacao com valores padrão
+    const nome = "Não informado";
+    const coordenacao = "Não informada";
+
+    const mensagem = `Inscrição realizada com sucesso!\nNIF: ${nif}\nSite: ${site}\nCódigo: ${codigo}`;
     document.getElementById("msgInscricao").innerText = mensagem;
 
     try {
@@ -295,8 +279,8 @@ async function gerarInscricao() {
             },
             body: JSON.stringify([{ 
                 nome, 
+                coordenacao, 
                 nif, 
-                coordenacao: coord, 
                 site, 
                 codigo_negativa: codigo,
                 status 
@@ -308,16 +292,16 @@ async function gerarInscricao() {
 }
 
 async function gerarNegativa() {
-    const nome = document.getElementById("nomeNegar").value.trim();
     const nif = document.getElementById("nifNegar").value.trim();
-
-    if (!nome || !nif) { mostrarAlerta("Preencha todos os campos."); return; }
+    if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
     if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
 
     const codigo = gerarCodigoNumerico();
     const status = "Recusa";
+    const nome = "Não informado";
+    const coordenacao = "Não informada";
 
-    const mensagem = `Recusa de convite registada!\nNome: ${nome}\nNIF: ${nif}\nCódigo: ${codigo}\nGuarda este número mágico!`;
+    const mensagem = `Recusa de convite registada!\nNIF: ${nif}\nCódigo: ${codigo}\nGuarda este número mágico!`;
     document.getElementById("msgNegar").innerText = mensagem;
 
     try {
@@ -331,8 +315,8 @@ async function gerarNegativa() {
             },
             body: JSON.stringify([{ 
                 nome, 
+                coordenacao, 
                 nif, 
-                coordenacao: null, 
                 site: null, 
                 codigo_negativa: codigo,
                 status 
