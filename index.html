@@ -247,7 +247,6 @@ function mostrarAlerta(mensagem) {
     setTimeout(() => alerta.classList.add("hidden"), 3000);
 }
 
-// Atualizado para gerar números de 1 a 1750
 function gerarCodigoNumerico() {
     return Math.floor(Math.random() * 2000) + 1;
 }
@@ -255,13 +254,16 @@ function gerarCodigoNumerico() {
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
-    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
+    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIL já submeteu a sua resposta."); return; }
 
-    const site = getSiteDoNif(nif) || "Não atribuído";
+    const site = getSiteDoNif(nif);
+    if (!site) {
+        mostrarAlerta("Este NIF não está autorizado a responder.");
+        return;
+    }
+
     const codigo = gerarCodigoNumerico();
     const status = "Inscrito";
-
-    // Campos nome e coordenacao com valores padrão
     const nome = "Não informado";
     const coordenacao = "Não informada";
 
@@ -296,12 +298,18 @@ async function gerarNegativa() {
     if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
     if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
 
+    const site = getSiteDoNif(nif);
+    if (!site) {
+        mostrarAlerta("Este NIF não está autorizado a responder.");
+        return;
+    }
+
     const codigo = gerarCodigoNumerico();
     const status = "Recusa";
     const nome = "Não informado";
     const coordenacao = "Não informada";
 
-    const mensagem = `Recusa de convite registada!\nNIF: ${nif}\nCódigo: ${codigo}\nGuarda este número mágico!`;
+    const mensagem = `Recusa registada!\nNIF: ${nif}\nCódigo: ${codigo}`;
     document.getElementById("msgNegar").innerText = mensagem;
 
     try {
@@ -317,7 +325,7 @@ async function gerarNegativa() {
                 nome, 
                 coordenacao, 
                 nif, 
-                site: null, 
+                site, 
                 codigo_negativa: codigo,
                 status 
             }])
@@ -327,7 +335,6 @@ async function gerarNegativa() {
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
 
-// GERAR IMAGEM
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -363,13 +370,9 @@ async function gerarImagem(texto, nomeArquivo) {
         link.download = nomeArquivo;
         link.href = canvas.toDataURL("image/png");
         link.click();
-    } catch (err) { mostrarAlerta("Erro ao carregar o logo da empresa."); }
+    } catch (err) { mostrarAlerta("Erro ao carregar o logo."); }
 }
 </script>
 
 </body>
 </html>
-
-
-
-
