@@ -265,7 +265,7 @@ async function gerarInscricao() {
     const codigo = gerarCodigoNumerico();
 
     const mensagem = 
-        `Inscrição realizada com sucesso,\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+        `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
 
     document.getElementById("msgInscricao").innerText = mensagem;
 
@@ -306,7 +306,7 @@ async function gerarNegativa() {
     const codigo = gerarCodigoNumerico();
 
     const mensagem = 
-        `Recusa registada,\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+        `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
 
     document.getElementById("msgNegar").innerText = mensagem;
 
