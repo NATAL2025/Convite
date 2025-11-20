@@ -351,26 +351,31 @@ async function gerarImagem(texto, nomeArquivo) {
     canvas.height = 400;
     const ctx = canvas.getContext("2d");
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     try {
-        const logo = await carregarImagem('https://raw.githubusercontent.com/NewspringServices/NEWSPRING_NATAL_2025/main/logo.png');
-        ctx.drawImage(logo, (canvas.width-250)/2, 20, 250, 125);
+        // Carrega a imagem de fundo TESTE (coloque o caminho correto)
+        const bg = await carregarImagem('TESTE.png');
 
+        // Desenha como fundo
+        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+
+        // Estilo do texto
         ctx.fillStyle = "#000000";
         ctx.font = "16px Arial";
         ctx.textAlign = "center";
 
+        // Escreve as linhas
         texto.split("\n").forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width/2, 170 + i*28);
+            ctx.fillText(linha, canvas.width / 2, 220 + i * 28);
         });
 
         const link = document.createElement("a");
         link.download = nomeArquivo;
         link.href = canvas.toDataURL("image/png");
         link.click();
-    } catch (err) { mostrarAlerta("Erro ao carregar o logo."); }
+
+    } catch (err) {
+        mostrarAlerta("Erro ao carregar a imagem TESTE.");
+    }
 }
 </script>
 
