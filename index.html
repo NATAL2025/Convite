@@ -263,11 +263,10 @@ async function gerarInscricao() {
     }
 
     const codigo = gerarCodigoNumerico();
-    const status = "Inscrito";
-    const nome = "Não informado";
-    const coordenacao = "Não informada";
 
-    const mensagem = `Inscrição realizada com sucesso!\nNIF: ${nif}\nSite: ${site}\nCódigo: ${codigo}`;
+    const mensagem = 
+        `Inscrição realizada com sucesso!\nNIF: ${nif}\nSite: ${site}\nCódigo: ${codigo}\nGuarda este número mágico!`;
+
     document.getElementById("msgInscricao").innerText = mensagem;
 
     try {
@@ -280,12 +279,12 @@ async function gerarInscricao() {
                 'Prefer': 'return=representation'
             },
             body: JSON.stringify([{ 
-                nome, 
-                coordenacao, 
+                nome: "Não informado", 
+                coordenacao: "Não informada", 
                 nif, 
                 site, 
                 codigo_negativa: codigo,
-                status 
+                status: "Inscrito"
             }])
         });
     } catch (err) { mostrarAlerta("Erro ao salvar no banco."); }
@@ -305,11 +304,10 @@ async function gerarNegativa() {
     }
 
     const codigo = gerarCodigoNumerico();
-    const status = "Recusa";
-    const nome = "Não informado";
-    const coordenacao = "Não informada";
 
-    const mensagem = `Recusa registada!\nNIF: ${nif}\nCódigo: ${codigo}`;
+    const mensagem = 
+        `Recusa registada!\nNIF: ${nif}\nCódigo: ${codigo}\nGuarda este número mágico!`;
+
     document.getElementById("msgNegar").innerText = mensagem;
 
     try {
@@ -322,12 +320,12 @@ async function gerarNegativa() {
                 'Prefer': 'return=representation'
             },
             body: JSON.stringify([{ 
-                nome, 
-                coordenacao, 
+                nome: "Não informado",
+                coordenacao: "Não informada",
                 nif, 
                 site, 
                 codigo_negativa: codigo,
-                status 
+                status: "Recusa"
             }])
         });
     } catch (err) { mostrarAlerta("Erro ao salvar."); }
@@ -352,18 +350,14 @@ async function gerarImagem(texto, nomeArquivo) {
     const ctx = canvas.getContext("2d");
 
     try {
-        // Carrega a imagem de fundo TESTE (coloque o caminho correto)
         const bg = await carregarImagem('TESTE.png');
 
-        // Desenha como fundo
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-        // Estilo do texto
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = "#ffffff";   // AGORA É BRANCO
         ctx.font = "16px Arial";
         ctx.textAlign = "center";
 
-        // Escreve as linhas
         texto.split("\n").forEach((linha, i) => {
             ctx.fillText(linha, canvas.width / 2, 220 + i * 28);
         });
