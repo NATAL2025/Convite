@@ -143,7 +143,7 @@ button.formButton:hover {
 #msgInscricao, #msgNegar {
     font-weight: 600;
     margin-top: 10px;
-    color: #16a34a;
+    color: #000000;   /* agora preto */
     text-align: center;
 }
 
@@ -254,7 +254,7 @@ function gerarCodigoNumerico() {
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
-    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIL já submeteu a sua resposta."); return; }
+    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
 
     const site = getSiteDoNif(nif);
     if (!site) {
@@ -354,13 +354,22 @@ async function gerarImagem(texto, nomeArquivo) {
 
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#ffffff";   // AGORA É BRANCO
-        ctx.font = "16px Arial";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "22px Arial";
         ctx.textAlign = "center";
 
-        texto.split("\n").forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width / 2, 220 + i * 28);
+        const linhas = texto.split("\n");
+
+        linhas.slice(0, -1).forEach((linha, i) => {
+            ctx.fillText(linha, canvas.width / 2, 200 + i * 30);
         });
+
+        ctx.font = "36px Arial";
+        ctx.fillText(
+            linhas[linhas.length - 1],
+            canvas.width / 2,
+            350
+        );
 
         const link = document.createElement("a");
         link.download = nomeArquivo;
