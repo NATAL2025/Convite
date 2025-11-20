@@ -143,7 +143,7 @@ button.formButton:hover {
 #msgInscricao, #msgNegar {
     font-weight: 600;
     margin-top: 10px;
-    color: #000000;   /* agora preto */
+    color: #000000;  
     text-align: center;
 }
 
@@ -208,6 +208,9 @@ const sites = {
     "Alfragide": ["111111"]
 };
 
+// ===========================
+// VERIFICA SE NIF JÁ RESPONDEU
+// ===========================
 async function nifJaRegistado(nif) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?nif=eq.${nif}`, {
         method: "GET",
@@ -227,6 +230,30 @@ function getSiteDoNif(nif) {
     return null;
 }
 
+// ===============================
+// NOVA FUNÇÃO: GERA CÓDIGO ÚNICO
+// ===============================
+async function gerarCodigoUnico() {
+    while (true) {
+        const codigo = Math.floor(Math.random() * 2000) + 1;
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?codigo_negativa=eq.${codigo}`, {
+            method: "GET",
+            headers: {
+                'apikey': SUPABASE_API_KEY,
+                'Authorization': `Bearer ${SUPABASE_API_KEY}`
+            }
+        });
+
+        const data = await res.json();
+
+        if (data.length === 0) return codigo; // É único
+    }
+}
+
+// ===============================
+// NAVEGAÇÃO
+// ===============================
 document.getElementById("btnIniciar").addEventListener("click", () => {
     document.getElementById("telaInicial").style.display = "none";
     document.getElementById("conteudoPrincipal").style.display = "flex";
@@ -247,92 +274,89 @@ function mostrarAlerta(mensagem) {
     setTimeout(() => alerta.classList.add("hidden"), 3000);
 }
 
-function gerarCodigoNumerico() {
-    return Math.floor(Math.random() * 2000) + 1;
-}
-
+// ===============================
+// SUBMETER CONFIRMAÇÃO DE PRESENÇA
+// ===============================
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
-    if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
-    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
+    if (!nif) return mostrarAlerta("Preencha o NIF.");
+
+    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
 
     const site = getSiteDoNif(nif);
-    if (!site) {
-        mostrarAlerta("Este NIF não está autorizado a responder.");
-        return;
-    }
+    if (!site) return mostrarAlerta("Este NIF não está autorizado.");
 
-    const codigo = gerarCodigoNumerico();
+    const codigo = await gerarCodigoUnico();
 
     const mensagem = 
         `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
 
     document.getElementById("msgInscricao").innerText = mensagem;
 
-    try {
-        await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_API_KEY,
-                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                'Prefer': 'return=representation'
-            },
-            body: JSON.stringify([{ 
-                nome: "Não informado", 
-                coordenacao: "Não informada", 
-                nif, 
-                site, 
-                codigo_negativa: codigo,
-                status: "Inscrito"
-            }])
-        });
-    } catch (err) { mostrarAlerta("Erro ao salvar no banco."); }
+    await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_API_KEY,
+            'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+            'Prefer': 'return=representation'
+        },
+        body: JSON.stringify([{ 
+            nome: "Não informado", 
+            coordenacao: "Não informada", 
+            nif, 
+            site, 
+            codigo_negativa: codigo,
+            status: "Inscrito"
+        }])
+    });
 
     gerarImagem(mensagem, "Confirmacao_Inscricao.png");
 }
 
+// ===============================
+// SUBMETER RECUSA
+// ===============================
 async function gerarNegativa() {
     const nif = document.getElementById("nifNegar").value.trim();
-    if (!nif) { mostrarAlerta("Preencha o NIF."); return; }
-    if (await nifJaRegistado(nif)) { mostrarAlerta("Este NIF já submeteu a sua resposta."); return; }
+    if (!nif) return mostrarAlerta("Preencha o NIF.");
+
+    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
 
     const site = getSiteDoNif(nif);
-    if (!site) {
-        mostrarAlerta("Este NIF não está autorizado a responder.");
-        return;
-    }
+    if (!site) return mostrarAlerta("Este NIF não está autorizado.");
 
-    const codigo = gerarCodigoNumerico();
+    const codigo = await gerarCodigoUnico();
 
     const mensagem = 
         `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
 
     document.getElementById("msgNegar").innerText = mensagem;
 
-    try {
-        await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_API_KEY,
-                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                'Prefer': 'return=representation'
-            },
-            body: JSON.stringify([{ 
-                nome: "Não informado",
-                coordenacao: "Não informada",
-                nif, 
-                site, 
-                codigo_negativa: codigo,
-                status: "Recusa"
-            }])
-        });
-    } catch (err) { mostrarAlerta("Erro ao salvar."); }
+    await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_API_KEY,
+            'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+            'Prefer': 'return=representation'
+        },
+        body: JSON.stringify([{ 
+            nome: "Não informado",
+            coordenacao: "Não informada",
+            nif, 
+            site, 
+            codigo_negativa: codigo,
+            status: "Recusa"
+        }])
+    });
 
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
 
+// ===============================
+// GERA IMAGEM DE CONFIRMAÇÃO
+// ===============================
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
