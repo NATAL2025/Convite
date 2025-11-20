@@ -231,24 +231,27 @@ function getSiteDoNif(nif) {
 }
 
 // ===============================
-// NOVA FUNÇÃO: GERA CÓDIGO ÚNICO
+// GERA CÓDIGO POR ORDEM DE SUBMISSÃO
 // ===============================
 async function gerarCodigoUnico() {
-    while (true) {
-        const codigo = Math.floor(Math.random() * 2000) + 1;
-
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?codigo_negativa=eq.${codigo}`, {
+    const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/participantes?select=codigo_negativa&order=codigo_negativa.desc&limit=1`,
+        {
             method: "GET",
             headers: {
                 'apikey': SUPABASE_API_KEY,
                 'Authorization': `Bearer ${SUPABASE_API_KEY}`
             }
-        });
+        }
+    );
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (data.length === 0) return codigo; // É único
+    if (data.length === 0 || !data[0].codigo_negativa) {
+        return 1;
     }
+
+    return Number(data[0].codigo_negativa) + 1;
 }
 
 // ===============================
