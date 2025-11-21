@@ -208,6 +208,9 @@ const sites = {
     "Alfragide": ["111111"]
 };
 
+// ===========================
+// VERIFICA SE NIF JÁ RESPONDEU
+// ===========================
 async function nifJaRegistado(nif) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?nif=eq.${nif}`, {
         method: "GET",
@@ -227,6 +230,9 @@ function getSiteDoNif(nif) {
     return null;
 }
 
+// ===============================
+// GERA CÓDIGO POR ORDEM DE SUBMISSÃO
+// ===============================
 async function gerarCodigoUnico() {
     const res = await fetch(
         `${SUPABASE_URL}/rest/v1/participantes?select=codigo_negativa&order=codigo_negativa.desc&limit=1`,
@@ -240,12 +246,17 @@ async function gerarCodigoUnico() {
     );
 
     const data = await res.json();
+
     if (data.length === 0 || !data[0].codigo_negativa) {
         return 1;
     }
+
     return Number(data[0].codigo_negativa) + 1;
 }
 
+// ===============================
+// NAVEGAÇÃO
+// ===============================
 document.getElementById("btnIniciar").addEventListener("click", () => {
     document.getElementById("telaInicial").style.display = "none";
     document.getElementById("conteudoPrincipal").style.display = "flex";
@@ -266,15 +277,23 @@ function mostrarAlerta(mensagem) {
     setTimeout(() => alerta.classList.add("hidden"), 3000);
 }
 
+// ===============================
+// SUBMETER CONFIRMAÇÃO DE PRESENÇA
+// ===============================
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
+
     if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
+
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
+
     const codigo = await gerarCodigoUnico();
 
-    const mensagem = `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+    const mensagem = 
+        `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+
     document.getElementById("msgInscricao").innerText = mensagem;
 
     await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
@@ -298,15 +317,23 @@ async function gerarInscricao() {
     gerarImagem(mensagem, "Confirmacao_Inscricao.png");
 }
 
+// ===============================
+// SUBMETER RECUSA
+// ===============================
 async function gerarNegativa() {
     const nif = document.getElementById("nifNegar").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
+
     if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
+
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
+
     const codigo = await gerarCodigoUnico();
 
-    const mensagem = `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+    const mensagem = 
+        `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
+
     document.getElementById("msgNegar").innerText = mensagem;
 
     await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
@@ -330,6 +357,9 @@ async function gerarNegativa() {
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
 
+// ===============================
+// GERA IMAGEM DE CONFIRMAÇÃO (TEXTO MAIS ABAIXO DO TOPO)
+// ===============================
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -351,24 +381,22 @@ async function gerarImagem(texto, nomeArquivo) {
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "#000000"; 
+        ctx.font = "22px Arial";
         ctx.textAlign = "center";
 
         const linhas = texto.split("\n");
-        const lineHeight = 30;  // espaçamento entre linhas
 
-        // Calcula altura total do texto e centraliza verticalmente
-        const totalHeight = (linhas.length - 1) * lineHeight + 36; 
-        let startY = (canvas.height - totalHeight) / 2 + 22; 
-
-        // linhas menores
-        ctx.font = "22px Arial";
+        // TEXTO MAIS ABAIXO DO TOPO E CENTRALIZADO
         linhas.slice(0, -1).forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width / 2, startY + i * lineHeight);
+            ctx.fillText(linha, canvas.width / 2, 70 + i * 30);
         });
 
-        // última linha maior
         ctx.font = "36px Arial";
-        ctx.fillText(linhas[linhas.length - 1], canvas.width / 2, startY + (linhas.length - 1) * lineHeight);
+        ctx.fillText(
+            linhas[linhas.length - 1],
+            canvas.width / 2,
+            200
+        );
 
         const link = document.createElement("a");
         link.download = nomeArquivo;
