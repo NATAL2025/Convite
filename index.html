@@ -239,7 +239,7 @@ function mostrarAlerta(mensagem) {
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
-    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu uma resposta. Para alterações, contacta-nos.);
+    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu uma resposta. Para alterações, contacta-nos.");
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
     const codigo = await gerarCodigoUnico();
@@ -323,6 +323,7 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
 
 
