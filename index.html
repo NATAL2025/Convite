@@ -263,7 +263,10 @@ async function gerarNegativa() {
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
     const codigo = await gerarCodigoUnico();
-    const mensagem = `Registo efetuado com sucesso, ainda assim, contamos partilhar este momento\nNIF: ${nif}\nNúmero: ${codigo}\n\n\nGuarda este número mágico!`;
+    
+    // Mensagem formatada
+    const mensagem = `Registo efetuado com sucesso,\nainda assim, contamos partilhar este momento\nNIF: ${nif}\nNúmero: ${codigo}`;
+    
     document.getElementById("msgNegar").innerText = mensagem;
 
     await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
@@ -274,7 +277,6 @@ async function gerarNegativa() {
 
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
-
 // Gerar imagem
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
@@ -323,6 +325,7 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
 
 
