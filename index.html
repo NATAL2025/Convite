@@ -208,9 +208,6 @@ const sites = {
     "Alfragide": ["111111"]
 };
 
-// ===========================
-// VERIFICA SE NIF JÁ RESPONDEU
-// ===========================
 async function nifJaRegistado(nif) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?nif=eq.${nif}`, {
         method: "GET",
@@ -230,9 +227,6 @@ function getSiteDoNif(nif) {
     return null;
 }
 
-// ===============================
-// GERA CÓDIGO POR ORDEM DE SUBMISSÃO
-// ===============================
 async function gerarCodigoUnico() {
     const res = await fetch(
         `${SUPABASE_URL}/rest/v1/participantes?select=codigo_negativa&order=codigo_negativa.desc&limit=1`,
@@ -246,17 +240,12 @@ async function gerarCodigoUnico() {
     );
 
     const data = await res.json();
-
     if (data.length === 0 || !data[0].codigo_negativa) {
         return 1;
     }
-
     return Number(data[0].codigo_negativa) + 1;
 }
 
-// ===============================
-// NAVEGAÇÃO
-// ===============================
 document.getElementById("btnIniciar").addEventListener("click", () => {
     document.getElementById("telaInicial").style.display = "none";
     document.getElementById("conteudoPrincipal").style.display = "flex";
@@ -277,23 +266,15 @@ function mostrarAlerta(mensagem) {
     setTimeout(() => alerta.classList.add("hidden"), 3000);
 }
 
-// ===============================
-// SUBMETER CONFIRMAÇÃO DE PRESENÇA
-// ===============================
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
-
     if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
-
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
-
     const codigo = await gerarCodigoUnico();
 
-    const mensagem = 
-        `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
-
+    const mensagem = `Registo efetuado com sucesso\nNIF: ${nif}\nSite: ${site}\nNúmero: ${codigo}\nGuarda este número mágico!`;
     document.getElementById("msgInscricao").innerText = mensagem;
 
     await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
@@ -317,23 +298,15 @@ async function gerarInscricao() {
     gerarImagem(mensagem, "Confirmacao_Inscricao.png");
 }
 
-// ===============================
-// SUBMETER RECUSA
-// ===============================
 async function gerarNegativa() {
     const nif = document.getElementById("nifNegar").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
-
     if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta.");
-
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
-
     const codigo = await gerarCodigoUnico();
 
-    const mensagem = 
-        `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
-
+    const mensagem = `Recusa registada com sucesso\nNIF: ${nif}\nNúmero: ${codigo}\nGuarda este número mágico!`;
     document.getElementById("msgNegar").innerText = mensagem;
 
     await fetch(`${SUPABASE_URL}/rest/v1/participantes`, {
@@ -357,9 +330,6 @@ async function gerarNegativa() {
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
 
-// ===============================
-// GERA IMAGEM DE CONFIRMAÇÃO (TEXTO MAIS ABAIXO DO TOPO)
-// ===============================
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -386,16 +356,16 @@ async function gerarImagem(texto, nomeArquivo) {
 
         const linhas = texto.split("\n");
 
-        // TEXTO MAIS ABAIXO DO TOPO E CENTRALIZADO
+        // NOVO POSICIONAMENTO - MAIS ABAIXO
         linhas.slice(0, -1).forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width / 2, 70 + i * 30);
+            ctx.fillText(linha, canvas.width / 2, 120 + i * 30);
         });
 
         ctx.font = "36px Arial";
         ctx.fillText(
             linhas[linhas.length - 1],
             canvas.width / 2,
-            200
+            250
         );
 
         const link = document.createElement("a");
@@ -411,4 +381,3 @@ async function gerarImagem(texto, nomeArquivo) {
 
 </body>
 </html>
-
