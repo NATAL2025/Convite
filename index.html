@@ -177,14 +177,13 @@ const SUPABASE_URL = 'https://bijndfsxrzjviwrdvwms.supabase.co';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpam5kZnN4cnpqdml3cmR2d21zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NTA5NTIsImV4cCI6MjA2NjQyNjk1Mn0.EWaFInuqTaxvnjytb40DdnflEbBrbSYcViKLYc_kKBk';
 
 const sites = {
-    "Columbano": ["266329438"],
-    "Báltico": ["12345"],
-    "Alexandre Herculano": ["001234"],
-    "Évora": ["01234"],
-    "A Verificar com Chefia": ["0001234"],
-    "Alfragide": ["111111"]
+    "Columbano": ["266329438", "266329439"],
+    "Báltico": ["12345", "12346"],
+    "Alexandre Herculano": ["001234", "001235"],
+    "Évora": ["01234", "01235"],
+    "Alfragide": ["111111", "111112"]
 };
-
+    
 // Verifica se NIF já respondeu
 async function nifJaRegistado(nif) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/participantes?nif=eq.${nif}`, {
@@ -324,5 +323,6 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
 
