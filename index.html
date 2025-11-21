@@ -358,7 +358,7 @@ async function gerarNegativa() {
 }
 
 // ===============================
-// GERA IMAGEM DE CONFIRMAÇÃO
+// GERA IMAGEM DE CONFIRMAÇÃO (TEXTO MAIS PRÓXIMO DO TOPO)
 // ===============================
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
@@ -378,7 +378,6 @@ async function gerarImagem(texto, nomeArquivo) {
 
     try {
         const bg = await carregarImagem('TESTE.png');
-
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "#000000"; 
@@ -387,16 +386,16 @@ async function gerarImagem(texto, nomeArquivo) {
 
         const linhas = texto.split("\n");
 
-        // Subindo o texto para mais alto
+        // TEXTO MAIS PRÓXIMO DO TOPO E CENTRALIZADO
         linhas.slice(0, -1).forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width / 2, 120 + i * 30);
+            ctx.fillText(linha, canvas.width / 2, 50 + i * 30);
         });
 
         ctx.font = "36px Arial";
         ctx.fillText(
             linhas[linhas.length - 1],
             canvas.width / 2,
-            270
+            180
         );
 
         const link = document.createElement("a");
