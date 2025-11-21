@@ -351,22 +351,24 @@ async function gerarImagem(texto, nomeArquivo) {
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "#000000"; 
-        ctx.font = "22px Arial";
         ctx.textAlign = "center";
 
         const linhas = texto.split("\n");
+        const lineHeight = 30;  // espaçamento entre linhas
 
-        // NOVO POSICIONAMENTO - MAIS ABAIXO
+        // Calcula altura total do texto e centraliza verticalmente
+        const totalHeight = (linhas.length - 1) * lineHeight + 36; 
+        let startY = (canvas.height - totalHeight) / 2 + 22; 
+
+        // linhas menores
+        ctx.font = "22px Arial";
         linhas.slice(0, -1).forEach((linha, i) => {
-            ctx.fillText(linha, canvas.width / 2, 120 + i * 30);
+            ctx.fillText(linha, canvas.width / 2, startY + i * lineHeight);
         });
 
+        // última linha maior
         ctx.font = "36px Arial";
-        ctx.fillText(
-            linhas[linhas.length - 1],
-            canvas.width / 2,
-            250
-        );
+        ctx.fillText(linhas[linhas.length - 1], canvas.width / 2, startY + (linhas.length - 1) * lineHeight);
 
         const link = document.createElement("a");
         link.download = nomeArquivo;
