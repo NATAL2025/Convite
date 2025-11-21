@@ -240,7 +240,7 @@ function mostrarAlerta(mensagem) {
 async function gerarInscricao() {
     const nif = document.getElementById("nif").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
-    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta - Alterações validar com Chefe de Equipa");
+    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta. Solicitamos que contactes a supervisão direta");
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
     const codigo = await gerarCodigoUnico();
@@ -260,7 +260,7 @@ async function gerarInscricao() {
 async function gerarNegativa() {
     const nif = document.getElementById("nifNegar").value.trim();
     if (!nif) return mostrarAlerta("Preencha o NIF.");
-    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta - Alterações validar com Chefe de Equipa");
+    if (await nifJaRegistado(nif)) return mostrarAlerta("Este NIF já submeteu resposta. Solicitamos que contactes a supervisão direta");
     const site = getSiteDoNif(nif);
     if (!site) return mostrarAlerta("Este NIF não está autorizado.");
     const codigo = await gerarCodigoUnico();
@@ -324,4 +324,5 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
