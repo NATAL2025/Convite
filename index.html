@@ -265,7 +265,13 @@ async function gerarNegativa() {
     const codigo = await gerarCodigoUnico();
     
     // Mensagem formatada
-    const mensagem = `Registo efetuado com sucesso,\nainda assim, contamos partilhar este momento\nNIF: ${nif}\nNúmero: ${codigo}`;
+    const mensagem = `Registo efetuado com sucesso,
+ainda assim, contamos partilhar este momento
+NIF: ${nif}
+Número: ${codigo}
+
+
+Guarda este número mágico!`;
     
     document.getElementById("msgNegar").innerText = mensagem;
 
@@ -277,6 +283,7 @@ async function gerarNegativa() {
 
     gerarImagem(mensagem, "Recusa_Convite.png");
 }
+
 // Gerar imagem
 function carregarImagem(src) {
     return new Promise((resolve, reject) => {
@@ -325,6 +332,7 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
 
 
