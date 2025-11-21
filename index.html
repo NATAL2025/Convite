@@ -340,14 +340,14 @@ function carregarImagem(src) {
     });
 }
 
-async function gerarImagem(texto, nomeArquivo) {
+    async function gerarImagem(texto, nomeArquivo) {
     const canvas = document.createElement("canvas");
     canvas.width = 700;
     canvas.height = 400;
     const ctx = canvas.getContext("2d");
 
     try {
-        const bg = await carregarImagem('TESTE.png');
+        const bg = await carregarImagem('/mnt/data/a0d941b0-744c-499e-9a98-6bfbe6129141.png');
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "#000000"; 
@@ -356,17 +356,15 @@ async function gerarImagem(texto, nomeArquivo) {
         const linhas = texto.split("\n");
         const lineHeight = 30;  // espaçamento entre linhas
 
-        // Calcula altura total do texto e centraliza verticalmente
+        // Ajusta altura para ficar na parte central do espaço em branco
         const totalHeight = (linhas.length - 1) * lineHeight + 36; 
-        let startY = (canvas.height - totalHeight) / 2 + 22; 
+        let startY = (canvas.height - totalHeight) / 2 + 10; // ligeiramente mais baixo para não tocar nas decorações
 
-        // linhas menores
         ctx.font = "22px Arial";
         linhas.slice(0, -1).forEach((linha, i) => {
             ctx.fillText(linha, canvas.width / 2, startY + i * lineHeight);
         });
 
-        // última linha maior
         ctx.font = "36px Arial";
         ctx.fillText(linhas[linhas.length - 1], canvas.width / 2, startY + (linhas.length - 1) * lineHeight);
 
@@ -376,7 +374,7 @@ async function gerarImagem(texto, nomeArquivo) {
         link.click();
 
     } catch (err) {
-        mostrarAlerta("Erro ao carregar a imagem TESTE.");
+        mostrarAlerta("Erro ao carregar a imagem.");
     }
 }
 </script>
