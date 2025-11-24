@@ -206,13 +206,25 @@ function getSiteDoNif(nif) {
 
 // Gera código único
 async function gerarCodigoUnico() {
+    // Pega sempre o último registro submetido
     const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/participantes?select=codigo_negativa&order=codigo_negativa.desc&limit=1`,
-        { method: "GET", headers: { 'apikey': SUPABASE_API_KEY, 'Authorization': `Bearer ${SUPABASE_API_KEY}` } }
+        `${SUPABASE_URL}/rest/v1/participantes?select=codigo_negativa&order=created_at.desc&limit=1`,
+        { 
+            method: "GET", 
+            headers: { 
+                'apikey': SUPABASE_API_KEY, 
+                'Authorization': `Bearer ${SUPABASE_API_KEY}` 
+            } 
+        }
     );
     const data = await res.json();
-    return (data.length === 0 || !data[0].codigo_negativa) ? 1 : Number(data[0].codigo_negativa) + 1;
+
+    // Se não houver registros, começa com 1
+    if (!data || data.length === 0 || !data[0].codigo_negativa) return 1;
+
+    return Number(data[0].codigo_negativa) + 1;
 }
+
 
 // Navegação
 document.getElementById("btnIniciar").addEventListener("click", () => {
@@ -332,6 +344,7 @@ async function gerarImagem(texto, nomeArquivo) {
 </script>
 </body>
 </html>
+
 
 
 
